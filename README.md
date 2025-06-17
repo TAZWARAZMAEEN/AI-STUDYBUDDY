@@ -1,5 +1,5 @@
 
-# 🧠 AI Presenter (Fitz)
+# 🧠 AI StudyBuddy (StudyBot)
 
 **AI Presenter (Fitz)** is a smart and interactive presentation assistant that helps users understand slide content through AI-powered explanations, summaries, flashcards, chatbot Q&A, and even voice narration — perfect for students, educators, or anyone tired of reading boring slides.
 
