@@ -1,0 +1,58 @@
+<!-- <!doctype html>
+<title>AI Presenter</title>
+<h1>Upload your PPTX or PDF file</h1>
+<form method="post" enctype="multipart/form-data">
+  <input type="file" name="ppt" required><br><br>
+  <label><input type="radio" name="mode" value="summary" checked> Summary</label><br>
+  <label><input type="radio" name="mode" value="detailed"> In-depth Explanation</label><br><br>
+  <input type="submit" value="Start Presentation">
+</form> -->
+
+
+<!DOCTYPE html>
+<html lang="en" class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Presenter Upload</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+
+  <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-8 w-full max-w-md space-y-6 transition-colors">
+    <h1 class="text-2xl font-bold text-center">📤 Upload Your Presentation</h1>
+    <form method="POST" enctype="multipart/form-data" class="space-y-5">
+      
+      <div>
+        <label for="ppt" class="block mb-2 font-medium">Select PPTX or PDF file</label>
+        <input type="file" name="ppt" id="ppt" accept=".ppt,.pptx,.pdf" required 
+               class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-400 dark:bg-gray-700 dark:text-white" />
+      </div>
+
+      <div>
+        <label class="block mb-2 font-medium">Explanation Mode</label>
+        <div class="flex gap-4">
+          <label class="flex items-center">
+            <input type="radio" name="mode" value="summary" checked class="mr-2" />
+            Summary
+          </label>
+          <label class="flex items-center">
+            <input type="radio" name="mode" value="detailed" class="mr-2" />
+            In-depth Explanation
+          </label>
+        </div>
+      </div>
+
+      <button type="submit"
+              class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition font-semibold">
+        🚀 Start Presentation
+      </button>
+    </form>
+
+    <div class="text-sm text-center text-gray-500 dark:text-gray-400 mt-4">
+      Powered by AI & Tailwind CSS
+    </div>
+  </div>
+
+</body>
+</html>
