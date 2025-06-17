@@ -7,7 +7,7 @@ from markdown import markdown
 from PyPDF2 import PdfReader
 import fitz  # PyMuPDF
 
-client = OpenAI(api_key="")
+client = OpenAI(api_key="openai_key")
 
 app = Flask(__name__)
 app.secret_key = "fitz_secret"
