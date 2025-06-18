@@ -3,6 +3,14 @@
 
 StudyBee is a smart and interactive presentation assistant that helps users understand slide content through AI-powered explanations, summaries, flashcards, chatbot Q&A, and even voice narration — perfect for students, educators, or anyone tired of reading boring slides.
 
+
+## 🎥 Demo Video
+
+[![Watch the Demo](https://img.youtube.com/vi/OdiCOqodUTQ/0.jpg)](https://youtu.be/OdiCOqodUTQ)
+
+> 📺 Click the thumbnail to watch a walkthrough of AI StudyBuddy in action!
+
+
 ---
 
 ## 🚀 Features
