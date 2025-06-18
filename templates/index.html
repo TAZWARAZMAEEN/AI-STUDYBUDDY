@@ -21,8 +21,8 @@
 
   <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-8 w-full max-w-md space-y-6 transition-colors">
     <h1 class="text-2xl font-bold text-center">📤 Upload Your Presentation</h1>
-    <form method="POST" enctype="multipart/form-data" class="space-y-5">
-      
+    
+    <form id="uploadForm" method="POST" enctype="multipart/form-data" class="space-y-5">
       <div>
         <label for="ppt" class="block mb-2 font-medium">Select PPTX or PDF file</label>
         <input type="file" name="ppt" id="ppt" accept=".ppt,.pptx,.pdf" required 
@@ -43,10 +43,19 @@
         </div>
       </div>
 
-      <button type="submit"
+      <button id="startBtn" type="submit"
               class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition font-semibold">
         🚀 Start Presentation
       </button>
+
+      <!-- Loading message (initially hidden) -->
+      <div id="loadingMsg" class="hidden flex items-center justify-center gap-2 text-blue-600 font-medium mt-2">
+        <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        Loading... Please wait
+      </div>
     </form>
 
     <div class="text-sm text-center text-gray-500 dark:text-gray-400 mt-4">
@@ -54,5 +63,19 @@
     </div>
   </div>
 
+  <!-- Script to show loading spinner -->
+  <script>
+    const form = document.getElementById('uploadForm');
+    const startBtn = document.getElementById('startBtn');
+    const loadingMsg = document.getElementById('loadingMsg');
+
+    form.addEventListener('submit', function () {
+      startBtn.disabled = true;
+      startBtn.classList.add('opacity-50');
+      loadingMsg.classList.remove('hidden');
+    });
+  </script>
+
 </body>
 </html>
+
