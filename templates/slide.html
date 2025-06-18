@@ -17,6 +17,13 @@
       background-color: #4caf50;
       transition: width 0.3s ease-in-out;
     }
+    .animate-spin {
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body style="font-family: sans-serif; padding: 20px;">
@@ -50,10 +57,19 @@
 </div>
 
 <h4>Ask a Question:</h4>
-<form method="post" action="/ask">
+<form id="askForm" method="post" action="/ask">
   <input type="hidden" name="slide_index" value="{{ slide_id }}">
   <input type="text" id="questionInput" name="question" placeholder="Ask a question about this slide" required style="width: 70%;">
-  <input type="submit" value="Ask">
+  <input type="submit" id="askBtn" value="Ask">
+
+  <!-- Loader appears after clicking Ask -->
+  <span id="askLoading" style="display:none; margin-left:10px; color: #1d4ed8; font-weight: bold;">
+    <svg style="width:16px;height:16px;vertical-align:middle;" class="animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+    </svg>
+    Thinking...
+  </span>
 </form>
 
 {% if answer %}
@@ -116,6 +132,13 @@ function goToSlide(form) {
   const index = form.slideSelect.value;
   window.location.href = "/slide/" + index;
 }
+
+// Loader for Ask Question button
+document.getElementById('askForm').addEventListener('submit', function () {
+  document.getElementById('askBtn').disabled = true;
+  document.getElementById('askBtn').style.opacity = "0.5";
+  document.getElementById('askLoading').style.display = 'inline-flex';
+});
 </script>
 
 </body>
