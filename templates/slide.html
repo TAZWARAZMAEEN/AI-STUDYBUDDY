@@ -1,145 +1,170 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100">
 <head>
   <meta charset="UTF-8">
-  <title>Slide {{ slide_id + 1 }} of {{ total }}</title>
+  <title>AI StudyBuddy — Slide View</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .progress-bar {
+    .loader {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
-      height: 12px;
-      background-color: #e0e0e0;
-      border-radius: 6px;
-      overflow: hidden;
-      margin-bottom: 10px;
-    }
-    .progress-fill {
       height: 100%;
-      background-color: #4caf50;
-      transition: width 0.3s ease-in-out;
+      background: rgba(0,0,0,0.6);
+      z-index: 50;
+      justify-content: center;
+      align-items: center;
     }
-    .animate-spin {
-      animation: spin 1s linear infinite;
+    .loader svg {
+      width: 50px;
+      height: 50px;
     }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    .flashcard {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .flashcard:hover {
+      transform: scale(1.02);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
     }
   </style>
 </head>
-<body style="font-family: sans-serif; padding: 20px;">
-
-<!-- 📈 Progress Tracker + Dropdown -->
-<div style="display: flex; justify-content: space-between; align-items: center;">
-  <h2>Slide {{ slide_id + 1 }} of {{ total }} ({{ ((slide_id + 1) / total * 100) | round(0) }}%)</h2>
-  <form onchange="goToSlide(this)">
-    <select name="slideSelect" style="padding: 5px;">
-      {% for i in range(total) %}
-        <option value="{{ i }}" {% if i == slide_id %}selected{% endif %}>Go to Slide {{ i + 1 }}</option>
-      {% endfor %}
-    </select>
-  </form>
-</div>
-
-<div class="progress-bar">
-  <div class="progress-fill" style="width: {{ ((slide_id + 1) / total * 100) }}%;"></div>
-</div>
-
-{% if image %}
-  <img src="{{ image }}" style="max-width:100%; border-radius:8px; margin-bottom:20px;">
-{% endif %}
-
-<h3>AI Explanation:</h3>
-<div style="background:#f5f5f5; padding:10px; border-radius:8px;">
-  {{ explanation|safe }}
-  <br>
-  <button onclick="speak(document.getElementById('explanationText').innerText)">🔊 Speak Explanation</button>
-  <div id="explanationText" style="display:none;">{{ explanation|striptags }}</div>
-</div>
-
-<h4>Ask a Question:</h4>
-<form id="askForm" method="post" action="/ask">
-  <input type="hidden" name="slide_index" value="{{ slide_id }}">
-  <input type="text" id="questionInput" name="question" placeholder="Ask a question about this slide" required style="width: 70%;">
-  <input type="submit" id="askBtn" value="Ask">
-
-  <!-- Loader appears after clicking Ask -->
-  <span id="askLoading" style="display:none; margin-left:10px; color: #1d4ed8; font-weight: bold;">
-    <svg style="width:16px;height:16px;vertical-align:middle;" class="animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+<body class="min-h-screen p-6 relative overflow-x-hidden">
+  <div class="loader" id="pageLoader">
+    <svg class="animate-spin text-white" fill="none" viewBox="0 0 24 24">
       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
     </svg>
-    Thinking...
-  </span>
-</form>
-
-{% if answer %}
-  <div style="background:#e6ffe6; padding:10px; border-radius:8px; margin-top:10px;">
-    <strong>Your Question:</strong> {{ question }}<br>
-    <strong>AI Answer:</strong> {{ answer|safe }}
-    <br>
-    <button onclick="speak(document.getElementById('answerText').innerText)">🔊 Speak Answer</button>
-    <div id="answerText" style="display:none;">{{ answer|striptags }}</div>
   </div>
-{% endif %}
 
-<h4>🧠 Flashcards:</h4>
-<div style="background:#eef6ff; padding:10px; border-radius:8px;">
-  {{ flashcard|safe }}
-  <br>
-  <button onclick="speak(document.getElementById('flashcardText').innerText)">🔊 Speak Flashcards</button>
-  <button onclick="downloadFlashcards()">💾 Download Flashcards</button>
-  <div id="flashcardText" style="display:none;">{{ flashcard|striptags }}</div>
-</div>
+  <div class="absolute w-96 h-96 bg-blue-500 rounded-full opacity-20 blur-3xl -top-24 -left-24 animate-pulse"></div>
+  <div class="absolute w-96 h-96 bg-purple-600 rounded-full opacity-20 blur-3xl -bottom-24 -right-24 animate-pulse"></div>
 
-<!-- 🔇 Stop Button -->
-<div style="margin-top: 15px;">
-  <button onclick="stopSpeaking()">❌ Stop Speaking</button>
-</div>
+  <div class="relative max-w-4xl mx-auto bg-white text-gray-900 p-10 rounded-3xl shadow-2xl z-10 space-y-8">
+    <div class="flex justify-between items-center">
+      <h2 class="text-xl font-bold text-blue-600">Slide {{ slide_id + 1 }} of {{ total }} ({{ ((slide_id + 1) / total * 100) | round(0) }}%)</h2>
+      <form onchange="goToSlide(this)">
+        <select name="slideSelect" class="border rounded px-3 py-1">
+          {% for i in range(total) %}
+            <option value="{{ i }}" {% if i == slide_id %}selected{% endif %}>Go to Slide {{ i + 1 }}</option>
+          {% endfor %}
+        </select>
+      </form>
+    </div>
 
-<!-- Navigation -->
-<div style="margin-top:20px;">
-  {% if slide_id > 0 %}
-    <a href="/slide/{{ slide_id - 1 }}">← Previous</a>
-  {% endif %}
-  {% if slide_id + 1 < total %}
-    <a href="/slide/{{ slide_id + 1 }}" style="float:right;">Next →</a>
-  {% endif %}
-</div>
+    <section>
+      <h4 class="text-lg font-semibold text-blue-500 mb-2">📢 AI Explanation:</h4>
+      <div class="bg-gray-100 p-4 rounded-lg shadow">
+        {{ explanation|safe }}
+        <br>
+        <div class="mt-2 flex gap-2">
+          <button onclick="speak(document.getElementById('explanationText').innerText)" class="px-4 py-2 bg-blue-600 text-white rounded">🔊 Speak Explanation</button>
+          <button onclick="stopSpeaking()" class="px-4 py-2 bg-red-600 text-white rounded">❌ Stop Speaking</button>
+        </div>
+        <div id="explanationText" style="display:none;">{{ explanation|striptags }}</div>
+      </div>
+    </section>
 
-<!-- JavaScript -->
-<script>
-function speak(text) {
-  stopSpeaking();
-  const msg = new SpeechSynthesisUtterance(text);
-  msg.lang = 'en-US';
-  window.speechSynthesis.speak(msg);
-}
+    <section>
+      <h4 class="text-lg font-semibold text-blue-500 mb-2">❓ Ask a Question:</h4>
+      <form id="askForm" method="post" action="/ask" class="mt-2 flex flex-wrap gap-2 items-center">
+        <input type="hidden" name="slide_index" value="{{ slide_id }}">
+        <input type="text" id="questionInput" name="question" placeholder="Ask a question about this slide" required class="flex-1 px-4 py-2 border border-gray-300 rounded">
+        <input type="submit" id="askBtn" value="Ask" class="px-4 py-2 bg-blue-600 text-white rounded">
+        <span id="askLoading" class="hidden text-blue-500 font-medium flex items-center gap-2">
+          <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+          Thinking...
+        </span>
+      </form>
 
-function stopSpeaking() {
-  window.speechSynthesis.cancel();
-}
+      {% if answer %}
+        <div class="bg-green-50 text-gray-800 p-4 rounded-lg mt-4 border border-green-200">
+          <strong class="text-green-700">Your Question:</strong> {{ question }}<br>
+          <strong class="text-green-700">AI Answer:</strong> {{ answer|safe }}
+          <br>
+          <div class="mt-2 flex gap-2">
+            <button onclick="speak(document.getElementById('answerText').innerText)" class="px-4 py-2 bg-green-600 text-white rounded">🔊 Speak Answer</button>
+            <button onclick="stopSpeaking()" class="px-4 py-2 bg-red-600 text-white rounded">❌ Stop Speaking</button>
+          </div>
+          <div id="answerText" style="display:none;">{{ answer|striptags }}</div>
+        </div>
+      {% endif %}
+    </section>
 
-function downloadFlashcards() {
-  const text = document.getElementById('flashcardText').innerText;
-  const blob = new Blob([text], { type: 'text/plain' });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = `flashcards_slide_{{ slide_id + 1 }}.txt`;
-  link.click();
-}
+    <section>
+      <h4 class="text-lg font-semibold text-blue-500 mb-2">🧠 Flashcards:</h4>
+      <div class="bg-blue-50 text-gray-900 p-4 rounded-lg space-y-3 shadow">
+        <div class="grid gap-3">
+          {% set colors = ['from-pink-500 to-red-500', 'from-green-400 to-emerald-500', 'from-indigo-500 to-purple-500', 'from-yellow-400 to-orange-500', 'from-cyan-400 to-sky-500', 'from-fuchsia-500 to-rose-500', 'from-blue-500 to-indigo-500', 'from-teal-400 to-cyan-500', 'from-amber-500 to-yellow-500', 'from-lime-500 to-green-500'] %}
+          {% set card_index = 0 %}
+          {% for card in flashcard.split('\n') if card.strip() %}
+            {% if 'Flashcard' in card %}
+              {% set this_color = colors[card_index % colors|length] %}
+              <div class="flashcard text-white p-3 rounded-lg font-semibold bg-gradient-to-r {{ this_color }}">{{ card.replace('<p>', '').replace('</p>', '') }}</div>
+              {% set card_index = card_index + 1 %}
+            {% else %}
+              <div class="flashcard bg-white p-3 rounded-lg border border-blue-200 text-sm leading-relaxed">
+                {{ card | replace('Q:', '<strong>Q:</strong>') | replace('A:', '<strong>A:</strong>') | safe }}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+        <div class="flex gap-2 mt-4">
+          <button onclick="speak(document.getElementById('flashcardText').innerText)" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-sm">🔊 Speak Flashcards</button>
+          <button onclick="stopSpeaking()" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition text-sm">❌ Stop Speaking</button>
+          <button onclick="downloadFlashcards()" class="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 transition text-sm">💾 Download Flashcards</button>
+        </div>
+        <div id="flashcardText" style="display:none;">{{ flashcard|striptags }}</div>
+      </div>
+    </section>
 
-function goToSlide(form) {
-  const index = form.slideSelect.value;
-  window.location.href = "/slide/" + index;
-}
+    <div class="flex justify-between items-center pt-6">
+      {% if slide_id > 0 %}<a href="/slide/{{ slide_id - 1 }}" class="text-blue-400 hover:underline">← Previous</a>{% else %}<span></span>{% endif %}
+      {% if slide_id + 1 < total %}<a href="/slide/{{ slide_id + 1 }}" class="text-blue-400 hover:underline" onclick="showLoader()">Next →</a>{% endif %}
+    </div>
+  </div>
 
-// Loader for Ask Question button
-document.getElementById('askForm').addEventListener('submit', function () {
-  document.getElementById('askBtn').disabled = true;
-  document.getElementById('askBtn').style.opacity = "0.5";
-  document.getElementById('askLoading').style.display = 'inline-flex';
-});
-</script>
+  <footer class="text-center text-xs text-gray-400 mt-10">🤖 AI StudyBuddy — Learn smart, not hard. Built with ❤️ using OpenAI.</footer>
 
+  <script>
+    function speak(text) {
+      stopSpeaking();
+      const msg = new SpeechSynthesisUtterance(text);
+      msg.lang = 'en-US';
+      window.speechSynthesis.speak(msg);
+    }
+
+    function stopSpeaking() {
+      window.speechSynthesis.cancel();
+    }
+
+    function downloadFlashcards() {
+      const text = document.getElementById('flashcardText').innerText;
+      const blob = new Blob([text], { type: 'text/plain' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `flashcards_slide_{{ slide_id + 1 }}.txt`;
+      link.click();
+    }
+
+    function goToSlide(form) {
+      showLoader();
+      const index = form.slideSelect.value;
+      window.location.href = "/slide/" + index;
+    }
+
+    function showLoader() {
+      document.getElementById('pageLoader').style.display = 'flex';
+    }
+
+    document.getElementById('askForm').addEventListener('submit', function () {
+      document.getElementById('askBtn').disabled = true;
+      document.getElementById('askLoading').classList.remove('hidden');
+    });
+  </script>
 </body>
 </html>
