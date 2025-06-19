@@ -57,7 +57,6 @@
       <h4 class="text-lg font-semibold text-blue-500 mb-2">📢 AI Explanation:</h4>
       <div class="bg-gray-100 p-4 rounded-lg shadow">
         {{ explanation|safe }}
-        <br>
         <div class="mt-2 flex gap-2">
           <button onclick="speak(document.getElementById('explanationText').innerText)" class="px-4 py-2 bg-blue-600 text-white rounded">🔊 Speak Explanation</button>
           <button onclick="stopSpeaking()" class="px-4 py-2 bg-red-600 text-white rounded">❌ Stop Speaking</button>
@@ -85,7 +84,6 @@
         <div class="bg-green-50 text-gray-800 p-4 rounded-lg mt-4 border border-green-200">
           <strong class="text-green-700">Your Question:</strong> {{ question }}<br>
           <strong class="text-green-700">AI Answer:</strong> {{ answer|safe }}
-          <br>
           <div class="mt-2 flex gap-2">
             <button onclick="speak(document.getElementById('answerText').innerText)" class="px-4 py-2 bg-green-600 text-white rounded">🔊 Speak Answer</button>
             <button onclick="stopSpeaking()" class="px-4 py-2 bg-red-600 text-white rounded">❌ Stop Speaking</button>
@@ -114,11 +112,10 @@
           {% endfor %}
         </div>
         <div class="flex gap-2 mt-4">
-          <button onclick="speak(document.getElementById('flashcardText').innerText)" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-sm">🔊 Speak Flashcards</button>
+          <button onclick="speak(document.querySelectorAll('.flashcard').length > 0 ? Array.from(document.querySelectorAll('.flashcard')).map(card => card.innerText.trim()).join('\n\n') : '')" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-sm">🔊 Speak Flashcards</button>
           <button onclick="stopSpeaking()" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition text-sm">❌ Stop Speaking</button>
           <button onclick="downloadFlashcards()" class="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 transition text-sm">💾 Download Flashcards</button>
         </div>
-        <div id="flashcardText" style="display:none;">{{ flashcard|striptags }}</div>
       </div>
     </section>
 
@@ -143,11 +140,15 @@
     }
 
     function downloadFlashcards() {
-      const text = document.getElementById('flashcardText').innerText;
+      const cards = document.querySelectorAll('.flashcard');
+      let text = '';
+      cards.forEach(card => {
+        text += card.innerText.trim() + '\n\n';
+      });
       const blob = new Blob([text], { type: 'text/plain' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = `flashcards_slide_{{ slide_id + 1 }}.txt`;
+      link.download = 'flashcards_slide_{{ slide_id + 1 }}.txt';
       link.click();
     }
 
@@ -168,3 +169,4 @@
   </script>
 </body>
 </html>
+
