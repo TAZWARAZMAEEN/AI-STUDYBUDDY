@@ -66,7 +66,7 @@
     </section>
 
     <section>
-      <h4 class="text-lg font-semibold text-blue-500 mb-2">❓ Ask a Question:</h4>
+      <h4 class="text-lg font-semibold text-blue-500 mb-2"> Ask a Question❓:</h4>
       <form id="askForm" method="post" action="/ask" class="mt-2 flex flex-wrap gap-2 items-center">
         <input type="hidden" name="slide_index" value="{{ slide_id }}">
         <input type="text" id="questionInput" name="question" placeholder="Ask a question about this slide" required class="flex-1 px-4 py-2 border border-gray-300 rounded">
@@ -93,31 +93,34 @@
       {% endif %}
     </section>
 
-    <section>
-      <h4 class="text-lg font-semibold text-blue-500 mb-2">🧠 Flashcards:</h4>
-      <div class="bg-blue-50 text-gray-900 p-4 rounded-lg space-y-3 shadow">
-        <div class="grid gap-3">
-          {% set colors = ['from-pink-500 to-red-500', 'from-green-400 to-emerald-500', 'from-indigo-500 to-purple-500', 'from-yellow-400 to-orange-500', 'from-cyan-400 to-sky-500', 'from-fuchsia-500 to-rose-500', 'from-blue-500 to-indigo-500', 'from-teal-400 to-cyan-500', 'from-amber-500 to-yellow-500', 'from-lime-500 to-green-500'] %}
-          {% set card_index = 0 %}
-          {% for card in flashcard.split('\n') if card.strip() %}
-            {% if 'Flashcard' in card %}
-              {% set this_color = colors[card_index % colors|length] %}
-              <div class="flashcard text-white p-3 rounded-lg font-semibold bg-gradient-to-r {{ this_color }}">{{ card.replace('<p>', '').replace('</p>', '') }}</div>
-              {% set card_index = card_index + 1 %}
-            {% else %}
-              <div class="flashcard bg-white p-3 rounded-lg border border-blue-200 text-sm leading-relaxed">
-                {{ card | replace('Q:', '<strong>Q:</strong>') | replace('A:', '<strong>A:</strong>') | safe }}
-              </div>
-            {% endif %}
-          {% endfor %}
-        </div>
-        <div class="flex gap-2 mt-4">
-          <button onclick="speak(document.querySelectorAll('.flashcard').length > 0 ? Array.from(document.querySelectorAll('.flashcard')).map(card => card.innerText.trim()).join('\n\n') : '')" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-sm">🔊 Speak Flashcards</button>
-          <button onclick="stopSpeaking()" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition text-sm">❌ Stop Speaking</button>
-          <button onclick="downloadFlashcards()" class="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 transition text-sm">💾 Download Flashcards</button>
-        </div>
-      </div>
-    </section>
+  <section>
+  <h4 class="text-lg font-semibold text-blue-500 mb-2">🧠 Flashcards:</h4>
+  <div class="bg-blue-50 text-gray-900 p-4 rounded-lg space-y-3 shadow">
+    <div class="grid gap-4">
+      {% set colors = ['from-pink-500 to-red-500', 'from-green-400 to-emerald-500', 'from-indigo-500 to-purple-500', 'from-yellow-400 to-orange-500', 'from-cyan-400 to-sky-500', 'from-fuchsia-500 to-rose-500', 'from-blue-500 to-indigo-500', 'from-teal-400 to-cyan-500', 'from-amber-500 to-yellow-500', 'from-lime-500 to-green-500'] %}
+      {% set card_index = 0 %}
+      {% for card in flashcard.split('\n') if card.strip() %}
+        {% if card.startswith('Q:') %}
+          {% set this_color = colors[card_index % colors|length] %}
+          <div class="flashcard text-white p-3 rounded-t-lg font-semibold bg-gradient-to-r {{ this_color }}">
+            {{ card | replace('Q:', '<strong>Q:</strong>') | safe }}
+          </div>
+        {% elif card.startswith('A:') %}
+          <div class="flashcard bg-white text-gray-900 p-3 rounded-b-lg border border-t-0 border-blue-200 text-sm leading-relaxed">
+            {{ card | replace('A:', '<strong>A:</strong>') | safe }}
+          </div>
+          {% set card_index = card_index + 1 %}
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="flex gap-2 mt-4">
+      <button onclick="speak(document.querySelectorAll('.flashcard').length > 0 ? Array.from(document.querySelectorAll('.flashcard')).map(card => card.innerText.trim()).join('\n\n') : '')" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-sm">🔊 Speak Flashcards</button>
+      <button onclick="stopSpeaking()" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition text-sm">❌ Stop Speaking</button>
+      <button onclick="downloadFlashcards()" class="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 transition text-sm">💾 Download Flashcards</button>
+    </div>
+  </div>
+</section>
 
     <div class="flex justify-between items-center pt-6">
       {% if slide_id > 0 %}<a href="/slide/{{ slide_id - 1 }}" class="text-blue-400 hover:underline">← Previous</a>{% else %}<span></span>{% endif %}
@@ -169,4 +172,5 @@
   </script>
 </body>
 </html>
+
 
