@@ -26,7 +26,7 @@ StudyBee is a smart and interactive presentation assistant that helps users unde
 ## 🛠️ Tech Stack
 
 - **Backend**: Python, Flask
-- **Frontend**: HTML, Jinja2, Bootstrap (optional)
+- **Frontend**: HTML, Jinja2
 - **AI/NLP**: GPT-based summarization, explanation, and chatbot
 - **Extras**: Text-to-speech (TTS) for narration
 
